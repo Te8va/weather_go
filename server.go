@@ -6,11 +6,12 @@ import (
 	"log"
 	"math"
 	"net/http"
+	"os"
 	"strings"
 	"time"
-)
 
-const openWeatherAPIKey = ""
+	"github.com/joho/godotenv"
+)
 
 type WeatherData struct {
 	Main struct {
@@ -26,6 +27,12 @@ type WeatherResponse struct {
 }
 
 func main() {
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Ошибка загрузки файла .env: %v", err)
+	}
+
 	http.HandleFunc("/weather", weatherCurrent)
 	fmt.Println("Server started. Listening on port 8080...")
 	log.Fatal(http.ListenAndServe(":8080", nil))
@@ -63,7 +70,7 @@ func weatherCurrent(w http.ResponseWriter, r *http.Request) {
 
 func getWeather(city string) (float64, error) {
 
-	// openWeatherAPIKey := os.Getenv("key")
+	openWeatherAPIKey := os.Getenv("key")
 
 	url := fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s", city, openWeatherAPIKey)
 
